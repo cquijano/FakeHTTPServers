@@ -23,8 +23,6 @@ class CustomHTTPServer(resource.Resource):
         if not os.path.exists(hostdir):
             hostdir = os.path.abspath(os.curdir + "/web/#/")
         
-        if 
-        
         path = os.path.abspath(hostdir + request.path)
         if os.path.isdir(path):
             path = os.path.abspath(path + root_path)
@@ -32,6 +30,12 @@ class CustomHTTPServer(resource.Resource):
             path = os.path.abspath(os.path.dirname(hostdir + request.path) + path_404)
         if not os.path.exists(path):
             path = os.path.abspath(os.curdir + "/web/#" + path_404)
+            
+        for overpath in allhosts.keys():
+            if request.path.split("/")[-1] == overpath:
+                path = allhosts[overpath]
+                break
+            
         print "Serving " + path.replace(os.path.abspath(os.curdir + "/web"), "")
         
         if os.path.exists(hostdir + "/.headers"):
