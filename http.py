@@ -23,7 +23,7 @@ class CustomHTTPServer(resource.Resource):
         if not os.path.exists(hostdir):
             hostdir = os.path.abspath(os.curdir + "/web/#/")
         
-        path = os.path.abspath(hostdir + "/" + request.path.replace("http://").split("/", 1)[1])
+        path = os.path.abspath(hostdir + "/" + request.path.replace("http://", "").split("/", 1)[1])
         if os.path.isdir(path):
             path = os.path.abspath(path + root_path)
         if not os.path.exists(path):
