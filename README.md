@@ -5,13 +5,13 @@ A http server designed for faking responses to network connectivity tests (and w
 
 Files are served in the following priority, falling to the next if the file does not exist:
 
-./web/##/(.*)*<path>
+./web/##/(.*)*&lt;path&gt;
 
-./web/<host>/<path>
+./web/&lt;host&gt;/&lt;path&gt;
 
-./web/<host>/#.html
+./web/&lt;host&gt;/#.html
 
-./web/#/<path>
+./web/#/&lt;path&gt;
 
 ./web/#/#.html
 
