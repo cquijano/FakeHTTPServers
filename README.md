@@ -3,17 +3,25 @@ FakeHTTPServers
 
 A http server designed for faking responses to network connectivity tests (and wpad).
 
+Arguments:
+-v		: debug level logging
+
 Files are served in the following priority, falling to the next if the file does not exist:
 
-./web/##/(.\*)\*/&lt;path&gt;
+1) overwrites in the ## directory: ./web/##/(.\*)\*/&lt;path&gt;
 
-./web/&lt;host&gt;/&lt;path&gt;
+2) index.html in the directory defined by the path and host requested: ./web/&lt;host&gt/&lt;path&gt;/index.html
 
-./web/&lt;host&gt;/#.html
+3) #.html in the directory defined by the path and host requested: ./web/&lt;host&gt/&lt;path&gt;/#.html
 
-./web/#/&lt;path&gt;
+4) original path requeuested on host requested: ./web/&lt;host&gt/&lt;path&gt;
 
-./web/#/#.html
+5) #.html in the directory defined by the host: ./web/&lt;host&gt/#.html
+
+6) if there is no ./web/&lt;host&gt/ folder, path requsted in # folder: ./web/#/&lt;path&gt
+
+7) notfound page: ./web/#/#.html
+
 
 
 A .headers file defines custom headers for a response e.g.
@@ -24,9 +32,9 @@ The first line of the .headers file can be a number, if so this is the status co
 
 .headers are read in the following priority:
 
-./web/<host>/<directories>/.headers
+./web/&lt;host&gt/&lt;path&gt/.headers
 
-./web/<host>/.headers
+./web/&lt;host&gt/.headers
 
 e.g.
 
@@ -40,6 +48,8 @@ then
 
 ./web/www.google.com/.headers
 
-This allows single pages on the same vhost to use different status codes by using a folder in place of the page and putting the content in a #.html file inside this folder along with the custom .headers for this page
+This allows single pages on the same vhost to use different status codes by using a folder in place of the page and putting the content in a index.hmtl or #.html file inside this folder along with the custom .headers for this page
+
+
 
 
