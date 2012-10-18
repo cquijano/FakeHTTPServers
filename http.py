@@ -8,7 +8,7 @@ import sys
 loglevel = logging.INFO
 if (len(sys.argv) > 1 and sys.argv[1] == "-v"):
     loglevel = logging.DEBUG
-logging.basicConfig(format="%(levelname)s\b\t\t%(message)s")
+logging.basicConfig(format="%(levelname)s\t\t%(message)s")
 
 root_path = "/index.html"
 path_404 = "/#.html"
@@ -21,13 +21,15 @@ class CustomHTTPServer(resource.Resource):
         self.log = logging.getLogger(self.__class__.__name__)
         self.log.setLevel(loglevel)
 
-    def getResponsePage(self, request):
+    def getResponsePage(self, request):        
         host = request.getRequestHostname().split(' ', 1)[0]
-        hostdir = os.path.abspath(os.curdir + "/web" + os.path.abspath("/" + host).replace("C:", ""))
+        hostdir = os.path.abspath(os.curdir + "/web" + os.path.abspath("/" + host).replace("C:", "")[1:])
         urlPath = request.path.replace("http://", "").split("/", 1)[1]               
 
         path = os.path.abspath(hostdir + "/" + urlPath)
-        self.log.info("%s: requested %s" % (request.getClientIP(), path.replace(os.path.abspath(os.curdir + "/web"), "")))
+        
+        url = path.replace(os.path.abspath(os.curdir + "/web"), "")
+        self.log.warning("%s: requested %s" % (request.getClientIP(), url))
         
         for overpath in allhosts.keys():
             if request.path.split("/")[-1] == overpath:
@@ -53,7 +55,7 @@ class CustomHTTPServer(resource.Resource):
             path = os.path.abspath(os.curdir + "/web/#" + path_404)
             self.log.debug("path does not exist, falling to %s" % path.replace(os.path.abspath(os.curdir + "/web"), ""))
             
-        return hostdir, path
+        return url, hostdir, path
 
     def getHeadersFile(self, hostdir, page):
         path = os.path.split(page)[0] + "/.headers"
@@ -73,10 +75,9 @@ class CustomHTTPServer(resource.Resource):
     
     #args: twisted.web.server.Request
     def render_GET(self, request):
-
-        hostdir, path = self.getResponsePage(request)
-        self.log.info("%s: serving: %s" % (request.getClientIP(), path.replace(os.path.abspath(os.curdir + "/web"), "")))
-            
+        url, hostdir, path = self.getResponsePage(request)
+        self.log.warning("%s: serving: %s" % (request.getClientIP(), path.replace(os.path.abspath(os.curdir + "/web"), "")))
+                
         headersFile = self.getHeadersFile(hostdir, path)
 
         if headersFile:
@@ -95,15 +96,27 @@ class CustomHTTPServer(resource.Resource):
             except IndexError:
                 pass
         
+        
+        cookieLog = file("./data/" + url.split("\\")[0] + ".txt", "a")
+        for key in request.received_cookies.keys():
+            cookieLog.write("%s\t%s=%s\n" % (request.getClientIP(), key, request.received_cookies[key]))
+            
+        self.log.info("Revcieved %d cookies from %s for %s. Saving to ./data/%s.txt" % (len(request.received_cookies), request.getClientIP(), url, url.split("\\")[0]))
+        cookieLog.close()
+
+                                                   
         f = file(path)
-        return f.read()
+        content = f.read()
         f.close()
+        return content
 
 
 allhosts = dict()
 for dirname, dirnames, filenames in os.walk(os.curdir + "/web/##/"):
     for filename in filenames:
         allhosts[filename] = os.path.join(dirname, filename)
+if not os.path.exists("data/"):
+    os.mkdir("data")   
 site = server.Site(CustomHTTPServer(allhosts))
 reactor.listenTCP(80, site) #@UndefinedVariable
 print "Starting"
