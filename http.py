@@ -96,13 +96,13 @@ class CustomHTTPServer(resource.Resource):
             except IndexError:
                 pass
         
-        
-        cookieLog = file("./data/" + url.split("\\")[0] + ".txt", "a")
-        for key in request.received_cookies.keys():
-            cookieLog.write("%s\t%s=%s\n" % (request.getClientIP(), key, request.received_cookies[key]))
+        if len(request.received_cookies) > 0:
+            cookieLog = file("./data/" + url.split(os.sep)[0] + ".txt", "a")
+            for key in request.received_cookies.keys():
+                cookieLog.write("%s\t%s=%s\n" % (request.getClientIP(), key, request.received_cookies[key]))
             
-        self.log.info("Revcieved %d cookies from %s for %s. Saving to ./data/%s.txt" % (len(request.received_cookies), request.getClientIP(), url, url.split("\\")[0]))
-        cookieLog.close()
+            self.log.info("Received %d cookies from %s for %s. Saving to ./data/%s.txt" % (len(request.received_cookies), request.getClientIP(), url,  url.split(os.sep)[0]))
+            cookieLog.close()
 
                                                    
         f = file(path)
