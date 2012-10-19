@@ -34,7 +34,7 @@ class CustomHTTPServer(resource.Resource):
         for overpath in allhosts.keys():
             if request.path.split("/")[-1] == overpath:
                 self.log.debug("Forced overwrite response: %s" % allhosts[overpath].replace(os.path.abspath(os.curdir + "/web"), ""))
-                return os.path.abspath(os.curdir + "/web/##/"), allhosts[overpath]
+                return url, os.path.abspath(os.curdir + "/web/##/"), allhosts[overpath]
 
         if not os.path.exists(hostdir):
             hostdir = os.path.abspath(os.curdir + "/web/#/")
