@@ -82,19 +82,19 @@ class CustomHTTPServer(resource.Resource):
 
         if headersFile:
             f = file(headersFile)
-        fileData = f.read()
-        fileLines = fileData.split("\n")
-        if fileLines[0].rstrip().isdigit() == True:
-            self.log.debug("using %s status code" % fileLines[0])
-            request.setResponseCode(int(fileLines[0].rstrip()))
-        else:
-            fileLines = fileLines[1:]
-        for line in fileLines:
-            try:
-                rsline = line.rstrip()
-                request.setHeader(rsline.split(": ")[0], rsline.split(": ")[1])
-            except IndexError:
-                pass
+            fileData = f.read()
+            fileLines = fileData.split("\n")
+            if fileLines[0].rstrip().isdigit() == True:
+                self.log.debug("using %s status code" % fileLines[0])
+                request.setResponseCode(int(fileLines[0].rstrip()))
+            else:
+                fileLines = fileLines[1:]
+            for line in fileLines:
+                try:
+                    rsline = line.rstrip()
+                    request.setHeader(rsline.split(": ")[0], rsline.split(": ")[1])
+                except IndexError:
+                    pass
         
         if len(request.received_cookies) > 0:
             cookieLog = file("./data/" + url.split(os.sep)[0] + ".txt", "a")
