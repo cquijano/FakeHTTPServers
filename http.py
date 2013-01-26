@@ -16,9 +16,9 @@ path_404 = "/#.html"
 class CustomHTTPServer(resource.Resource):
     isLeaf = True 
 	
-	testing = False
+	testing = 2
     
-	test = True
+	test = 2
 	
     def __init__(self, allhosts):
         self.allhosts = allhosts
