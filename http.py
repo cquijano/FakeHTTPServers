@@ -14,9 +14,11 @@ root_path = "/index.html"
 path_404 = "/#.html"
 
 class CustomHTTPServer(resource.Resource):
+
     isLeaf = True
     
 	test = 1 
+
 	
     def __init__(self, allhosts):
         self.allhosts = allhosts
