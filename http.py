@@ -14,11 +14,9 @@ root_path = "/index.html"
 path_404 = "/#.html"
 
 class CustomHTTPServer(resource.Resource):
-    isLeaf = True 
-	
-	testing = 2
+    isLeaf = True
     
-	test = 2
+	test = 1 
 	
     def __init__(self, allhosts):
         self.allhosts = allhosts
@@ -27,7 +25,7 @@ class CustomHTTPServer(resource.Resource):
 
     def getResponsePage(self, request):        
         host = request.getRequestHostname().split(' ', 1)[0]
-        hostdir = os.path.abspath(os.curdir + "/web/" + os.path.abspath("/" + host).replace("C:", "")[1:])
+        hostdir = os.path.abspath(os.curdir + "/web" + os.path.abspath("/" + host).replace("C:", "")[1:])
         urlPath = request.path.replace("http://", "").split("/", 1)[1]               
 
         path = os.path.abspath(hostdir + "/" + urlPath)
